@@ -49,8 +49,18 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
 
 // Animate
+const clock = new THREE.Clock();
+
+console.log(clock);
+
 const tick = () => {
-  cube1.rotation.y += 0.01;
+  const elapsedTime = clock.getElapsedTime();
+  cube1.rotation.y = elapsedTime;
+  cube2.position.x = Math.cos(elapsedTime);
+
+  camera.position.y = Math.sin(elapsedTime);
+  camera.lookAt(cube2.position);
+
   window.requestAnimationFrame(tick);
   renderer.render(scene, camera);
 };
