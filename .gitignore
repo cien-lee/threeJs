@@ -3,4 +3,7 @@ node_modules/
 .eslintcache
 .next
 
+**/*/.gitkeep
+.gitkeep
+
 .DS_Store
