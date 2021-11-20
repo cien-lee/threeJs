@@ -1,5 +1,6 @@
 import "./style.css";
 import * as THREE from "three";
+import gsap from "gsap";
 
 // Sizes
 const sizes = {
@@ -49,9 +50,30 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
 
 // Animate
+// 1. 그냥 animation
+// const clock = new THREE.Clock();
+
+// const tick = () => {
+//   const elapsedTime = clock.getElapsedTime();
+//   cube1.rotation.y = elapsedTime;
+//   cube2.position.x = Math.cos(elapsedTime);
+
+//   camera.position.y = Math.sin(elapsedTime);
+//   camera.lookAt(cube2.position);
+
+//   window.requestAnimationFrame(tick);
+//   renderer.render(scene, camera);
+// };
+
+// tick();
+
+// 2. Gsap을 사용한 animation
+gsap.to(cube1.position, { duration: 1, delay: 1, x: 2 });
+
 const tick = () => {
-  cube1.rotation.y += 0.01;
+  // Render
   window.requestAnimationFrame(tick);
+  // Call tick again on the next frame
   renderer.render(scene, camera);
 };
 
