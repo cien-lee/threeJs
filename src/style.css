@@ -1,5 +1,15 @@
-body,
-html {
+* {
   margin: 0;
   padding: 0;
+}
+
+body,
+html {
+  overflow: hidden;
+}
+
+#canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
 }
