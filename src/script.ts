@@ -1,11 +1,20 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import gsap from "gsap";
+import * as dat from "lil-gui";
 
 // Sizes
 const sizes = {
   width: window.innerWidth,
   height: window.innerHeight,
+};
+
+const parameters = {
+  color: 0xff0000,
+  spin: () => {
+    gsap.to(mesh.rotation, 1, { y: mesh.rotation.y + Math.PI * 2 });
+  },
 };
 
 // Canvas
@@ -31,19 +40,30 @@ const axesHelper = new THREE.AxesHelper(2);
 scene.add(axesHelper);
 
 // Objects
-const box = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1, 5, 5, 5),
-  new THREE.MeshBasicMaterial({ color: "red", wireframe: true })
-);
+// Create an empty BufferGeometry
+const geometry = new THREE.BufferGeometry();
 
-const sphere = new THREE.Mesh(
-  new THREE.SphereGeometry(1, 32, 32),
-  new THREE.MeshBasicMaterial({ color: "blue", wireframe: true })
-);
+// Create a Float32Array containing the vertices position (3 by 3)
+const positionsArray = new Float32Array([
+  0,
+  0,
+  0, // First vertex
+  0,
+  1,
+  0, // Second vertex
+  1,
+  0,
+  0, // Third vertex
+]);
 
-sphere.position.set(1, 1, 0);
+// Create the attribute and name it 'position'
+const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
+geometry.setAttribute("position", positionsAttribute);
 
-scene.add(box, sphere);
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+
+const mesh = new THREE.Mesh(geometry, material);
+scene.add(mesh);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
@@ -101,3 +121,21 @@ const tick = () => {
 };
 
 tick();
+
+/**
+ * Debug
+ */
+const gui = new dat.GUI({
+  // closed: true,
+  width: 400,
+});
+// gui.hide()
+gui.add(mesh.position, "y").min(-3).max(3).step(0.01).name("elevation");
+gui.add(mesh, "visible");
+gui.add(material, "wireframe");
+
+gui.addColor(parameters, "color").onChange(() => {
+  material.color.set(parameters.color);
+});
+
+gui.add(parameters, "spin");
