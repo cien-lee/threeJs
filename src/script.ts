@@ -1,6 +1,6 @@
 import "./style.css";
 import * as THREE from "three";
-import gsap from "gsap";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 // Sizes
 const sizes = {
@@ -9,38 +9,35 @@ const sizes = {
 };
 
 // Canvas
-const canvas = document.querySelector("canvas.webgl");
+const canvas = document.getElementById("canvas");
 
 // Scene
 const scene = new THREE.Scene();
 
 // Camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 10);
 camera.position.z = 3;
 
 scene.add(camera);
 
-/**
- * Axes Helper
- */
+// Cursor
+const cursor = {
+  x: 0,
+  y: 0,
+};
+
+// Axes Helper
 const axesHelper = new THREE.AxesHelper(2);
 scene.add(axesHelper);
 
-// Group
-const group = new THREE.Group();
-group.scale.y = 2;
-group.rotation.y = 0.2;
-scene.add(group);
-
 // Objects
-const cube1 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: "red" }));
-const cube2 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: "green" }));
-const cube3 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: "blue" }));
+const cube1 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 5, 5, 5), new THREE.MeshBasicMaterial({ color: "red" }));
 
-cube1.position.x = -1.5;
-cube3.position.x = 1.5;
+scene.add(cube1);
 
-group.add(cube1, cube2, cube3);
+// Controls
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
@@ -49,32 +46,25 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
 
+window.addEventListener("mousemove", (event) => {
+  cursor.x = event.clientX / sizes.width - 0.5;
+  cursor.y = -(event.clientY / sizes.height - 0.5);
+});
+
 // Animate
-// 1. 그냥 animation
-// const clock = new THREE.Clock();
-
-// const tick = () => {
-//   const elapsedTime = clock.getElapsedTime();
-//   cube1.rotation.y = elapsedTime;
-//   cube2.position.x = Math.cos(elapsedTime);
-
-//   camera.position.y = Math.sin(elapsedTime);
-//   camera.lookAt(cube2.position);
-
-//   window.requestAnimationFrame(tick);
-//   renderer.render(scene, camera);
-// };
-
-// tick();
-
-// 2. Gsap을 사용한 animation
-gsap.to(cube1.position, { duration: 1, delay: 1, x: 2 });
+const clock = new THREE.Clock();
 
 const tick = () => {
+  const elapsedTime = clock.getElapsedTime();
+
+  // Update controls
+  controls.update();
+
   // Render
-  window.requestAnimationFrame(tick);
-  // Call tick again on the next frame
   renderer.render(scene, camera);
+
+  // Call tick again on the next frame
+  window.requestAnimationFrame(tick);
 };
 
 tick();
