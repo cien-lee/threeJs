@@ -31,9 +31,19 @@ const axesHelper = new THREE.AxesHelper(2);
 scene.add(axesHelper);
 
 // Objects
-const cube1 = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 5, 5, 5), new THREE.MeshBasicMaterial({ color: "red" }));
+const box = new THREE.Mesh(
+  new THREE.BoxGeometry(1, 1, 1, 5, 5, 5),
+  new THREE.MeshBasicMaterial({ color: "red", wireframe: true })
+);
 
-scene.add(cube1);
+const sphere = new THREE.Mesh(
+  new THREE.SphereGeometry(1, 32, 32),
+  new THREE.MeshBasicMaterial({ color: "blue", wireframe: true })
+);
+
+sphere.position.set(1, 1, 0);
+
+scene.add(box, sphere);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
